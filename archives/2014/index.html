@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Archives: 2014 | Page One</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="A collection of projects that I have worked on in the past few years.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Page One">
+<meta property="og:url" content="http://phriscage.github.io/archives/2014/index.html">
+<meta property="og:site_name" content="Page One">
+<meta property="og:description" content="A collection of projects that I have worked on in the past few years.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Page One">
+<meta name="twitter:description" content="A collection of projects that I have worked on in the past few years.">
+  
+    <link rel="alternative" href="/atom.xml" title="Page One" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Page One</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A collection of software projects by Chris Page</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-github-link" class="nav-icon" href="https://github.com/phriscage" target="_blank"></a>
+        <a id="nav-linkedin-link" class="nav-icon" href="https://www.linkedin.com/in/christophertpage" target="_blank"></a>
+        <a id="nav-twitter-link" class="nav-icon" href="https://twitter.com/phriscage" target="_blank"></a>
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://phriscage.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Flask-NoSQL-Authentication-Tutorial-Part-I" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/" class="article-date">
+  <time datetime="2014-12-06T22:55:00.000Z" itemprop="datePublished">Dec 6 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/">Flask NoSQL Authentication Tutorial - Part I</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>This tutorial provides instructions for how to create an authentication mechanism for a web application utilizing <a href="http://flask.pocoo.org/" target="_blank" rel="external">Flask</a> as the <a href="https://www.python.org/" target="_blank" rel="external">Python</a> web framework and <a href="http://www.elasticsearch.com/" target="_blank" rel="external">Elasticsearch</a> (ES) as the NoSQL data store. Many applications utilize ES as the index/search layer, but I choose ES as the primary database as a proof of concept for both persistant and search data layers. ES can be swapped out with almost any available <a href="http://en.wikipedia.org/wiki/Document-oriented_database" target="_blank" rel="external">NoSQL document store</a>.</p>
+<p>A basic understanding of the *NIX system, Python, and web applications is required otherwise you may struggle with some of the concepts and context. If you are new to Flask, I highly recommend checking out Miguel Grinberg’s <a href="http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank" rel="external">Flask Mega Tutorial</a> or his newley published <a href="http://flaskbook.com" target="_blank" rel="external">Flask Book</a> by O’Reilly for a complete Flask application how-to. The <a href="http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins" target="_blank" rel="external">User Login tutorial</a> actually inspired me to build this tutorial for a NoSQL data store.</p>
+<p>In this first part of the tutorial, I will be covering the prerequisites, the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">main API</a>, the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">User model</a>, and the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/users/views.py" target="_blank" rel="external">Users API</a> end point. If you have any questions, feel free to write below and I’ll be happy to answer if you have any issues.</p>
+<p>Let’s get started!</p>
+<h2 id="Prerequisites"><a href="#Prerequisites" class="headerlink" title="Prerequisites"></a>Prerequisites</h2><p>Below are the specific prerequisites that are required to setup the working environment and download the neccesary packages and files.</p>
+<ul>
+<li><strong>linux server</strong>: This tutorial is based off the <a href="http://www.centos.org/" target="_blank" rel="external">Centos</a> 6.4 x86_64 base image, so package management (and command instructions below) are via <a href="http://en.wikipedia.org/wiki/RPM_Package_Manager" target="_blank" rel="external">RPM</a> and <a href="http://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified" target="_blank" rel="external">Yum</a>. sudo or root privileges are required to install the various system packages. <em>If you prefer <a href="https://www.debian.org/" target="_blank" rel="external">Debian</a>, you’ll need to substitute the respectable DEB packages and apt-get commands.</em></li>
+</ul>
+<p><code>ssh username@hostname</code></p>
+<ul>
+<li><strong>Elasticsearch</strong>: The ES server package is downloaded directly from the ES site. Installation and the default configuration is all that is required to get the service running. You can verify ES is running by executing <code>curl -X GET http://127.0.0.1:9200</code> or navigating to the URL.<br><em>note that version 1.3.2 is used at the time of writing</em></li>
+</ul>
+<p><code>wget wget     https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.2.noarch.rpm &amp;&amp; yum install elasticsearch-1.3.2.noarch.rpm --nogpgcheck -y</code><br><code>service elasticsearch start</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET http://127.0.0.1:9200&#10;&#123;&#10;  &#34;status&#34; : 200,&#10;  &#34;name&#34; : &#34;Sludge&#34;,&#10;  &#34;version&#34; : &#123;&#10;    &#34;number&#34; : &#34;1.3.2&#34;,&#10;    &#34;build_hash&#34; : &#34;dee175dbe2f254f3f26992f5d7591939aaefd12f&#34;,&#10;    &#34;build_timestamp&#34; : &#34;2014-08-13T14:29:30Z&#34;,&#10;    &#34;build_snapshot&#34; : false,&#10;    &#34;lucene_version&#34; : &#34;4.9&#34;&#10;  &#125;,&#10;  &#34;tagline&#34; : &#34;You Know, for Search&#34;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Python</strong>: Python 2.6.6 is already included in the base Centos 6.4, so that version will work. We’ll be using <a href="http://virtualenv.readthedocs.org/en/latest/" target="_blank" rel="external">Python virtual environments</a> and <a href="https://pip.pypa.io/en/latest/" target="_blank" rel="external">Pip</a> to handle the Python libraries and dependencies:</li>
+</ul>
+<p><code>yum install python-virtualenv python-virtualenvwrapper python-pip -y</code></p>
+<ul>
+<li><strong>Git</strong>: We’ll need to install <a href="http://git-scm.com/" target="_blank" rel="external">Git</a> and clone the tutorial source code from my <a href="https://github.com/" target="_blank" rel="external">Gihub</a> <a href="https://github.com/phriscage/flask_elasticsearch_auth_example &amp;&amp; cd flask_elasticsearch_auth_example" target="_blank" rel="external">repository</a>.</li>
+</ul>
+<p><code>yum install git -y</code><br><code>git clone https://github.com/phriscage/flask_elasticsearch_auth_example &amp;&amp; cd flask_elasticsearch_auth_example</code></p>
+<ul>
+<li><strong>Python libraries</strong>: Create a new virtual environment and activate it. Then pull the packages from <a href="https://pypi.python.org/pypi" target="_blank" rel="external">PyPi</a> using Pip and <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/requirements.txt" target="_blank" rel="external">requirements.txt</a>:</li>
+</ul>
+<p><code>mkvirtualenv flask_elasticsearch_auth_example -r requirements.txt</code></p>
+<p>Now we should have all the required dependencies. :)</p>
+<h2 id="Main-API"><a href="#Main-API" class="headerlink" title="Main API"></a>Main API</h2><p>Before we create the primary User model, we need to create the basic Flask app API and verify we can connect to ES. I’m using Flask’s global <a href="http://flask.pocoo.org/docs/0.10/api/#flask.g" target="_blank" rel="external">g</a> module to handle the ES client connection for each request. You can tweak the ES connection pool options for the cluster, but for now the default connection object works. I am using the default_error_handle method to return a standard <a href="http://tools.ietf.org/html/rfc7159" target="_blank" rel="external">JSON</a> formatted message for all of the relevant <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html" target="_blank" rel="external">HTTP error codes</a>.</p>
+<figure class="highlight python"><figcaption><span>main.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connect_db</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">""" connect to couchbase """</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        db_client = Elasticsearch()</span><br><span class="line">            <span class="comment">#[&#123;'host': ELASTICSEARCH_HOST, 'port': ELASTICSEARCH_PORT&#125;],</span></span><br><span class="line">            <span class="comment">#use_ssl=True,)</span></span><br><span class="line">            <span class="comment">#sniff_on_connection_fail=True,)</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> error:</span><br><span class="line">        logger.critical(error)</span><br><span class="line">        <span class="keyword">raise</span></span><br><span class="line">    <span class="keyword">return</span> db_client</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_app</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">""" dynamically create the app """</span></span><br><span class="line">    app = Flask(__name__)</span><br><span class="line">    app.config.from_object(__name__)</span><br><span class="line">   </span><br><span class="line"><span class="decorator">    @app.before_request</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">before_request</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="string">""" create the db_client global if it does not exist """</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hasattr(g, <span class="string">'db_client'</span>):</span><br><span class="line">            g.db_client = connect_db()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">default_error_handle</span><span class="params">(error=None)</span>:</span></span><br><span class="line">        <span class="string">""" create a default json error handle """</span></span><br><span class="line">        <span class="keyword">return</span> jsonify(error=str(error), message=error.description,</span><br><span class="line">            success=<span class="keyword">False</span>), error.code</span><br><span class="line">    </span><br><span class="line">    <span class="comment">## handle all errors with json output</span></span><br><span class="line">    <span class="keyword">for</span> error <span class="keyword">in</span> range(<span class="number">400</span>, <span class="number">420</span>) + range(<span class="number">500</span>, <span class="number">506</span>):</span><br><span class="line">        app.error_handler_spec[<span class="keyword">None</span>][error] = default_error_handle</span><br></pre></td></tr></table></figure>
+<p>The main.py arguments accept a specific hostname or IP and port number. When you start the application, the output should look like this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./main.py&#10;2014-12-06 22:10:05,770 INFO werkzeug[8640] : _log :  * Running on http://0.0.0.0:8000/&#10;2014-12-06 22:10:05,770 INFO werkzeug[8640] : _log :  * Restarting with reloader</span><br></pre></td></tr></table></figure>
+<p>We can verify it works, along with the default_error_handle, but pulling the base URL. <code>curl -X GET -D - http://127.0.0.1:8000/</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET -D - http://127.0.0.1:8000/&#10;HTTP/1.0 404 NOT FOUND&#10;Content-Type: application/json&#10;Content-Length: 191&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Sun, 07 Dec 2014 00:35:23 GMT&#10;&#10;&#123;&#10;  &#34;error&#34;: &#34;404: Not Found&#34;,&#10;  &#34;message&#34;: &#34;The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.&#34;,&#10;  &#34;success&#34;: false&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>Great! Now let’s define our User model and how-to store the user document data in ES.</p>
+<h2 id="User-model"><a href="#User-model" class="headerlink" title="User model"></a>User model</h2><p>The User model contains the data structure and validation methods for the user metadata that will be passed from the API.</p>
+<p>First, we include the system level modules and two password hash functions from <a href="http://werkzeug.pocoo.org/" target="_blank" rel="external">werkzeug</a>. We define what the key or ID attribute name will be for our user document and any additional required and/or valid attributes for the document.</p>
+<figure class="highlight python"><figcaption><span>user.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> absolute_import</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> werkzeug.security <span class="keyword">import</span> generate_password_hash, check_password_hash</span><br><span class="line"></span><br><span class="line">KEY_NAME = <span class="string">'email_address'</span></span><br><span class="line">REQUIRED_ARGS = (KEY_NAME, <span class="string">'password'</span>,)</span><br><span class="line">VALID_ARGS = REQUIRED_ARGS + (<span class="string">'first_name'</span>, <span class="string">'last_name'</span>,)</span><br></pre></td></tr></table></figure>
+<p>Instatiation of class executes private class functions to validate the kwargs against the global VALID_AGRS and REQUIRED_ARGS. It also sets the default and required values for the user document:</p>
+<figure class="highlight python"><figcaption><span>user.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">""" encapsulate the user as an object """</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">""" instantiate the class """</span></span><br><span class="line">        self.key = <span class="keyword">None</span></span><br><span class="line">        self.values = &#123;&#125;</span><br><span class="line">        self._validate_args(**kwargs)</span><br><span class="line">        self._set_key(kwargs[KEY_NAME])</span><br><span class="line">        self._set_values()</span><br></pre></td></tr></table></figure>
+<p>The set_password and check_password functions are how the model generates a password hash and verifies a plain text password against a hash. Instead of creating our own hashing algorithms, we use werkzeug’s utilies we imported above:</p>
+<figure class="highlight python"><figcaption><span>user.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_password</span><span class="params">(self, password)</span>:</span></span><br><span class="line">    <span class="string">""" set the password using werkzeug generate_password_hash """</span></span><br><span class="line">    self.values[<span class="string">'password'</span>] = generate_password_hash(password)</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_password</span><span class="params">(self, password)</span>:</span></span><br><span class="line">    <span class="string">""" check the password using werkzeug check_password_hash """</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.values.get(<span class="string">'password'</span>, <span class="keyword">None</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">return</span> check_password_hash(self.values[<span class="string">'password'</span>], password)</span><br></pre></td></tr></table></figure>
+<p>There’s not alot going on the User model for Part I, but we will expand the functionality in the next tutorial.</p>
+<h2 id="Users-API"><a href="#Users-API" class="headerlink" title="Users API:"></a>Users API:</h2><p>Now that we have our basic user model, let’s define the User API endpoint that enables us to create a new user in ES. I’m using Flask’s <a href="http://flask.pocoo.org/docs/0.10/blueprints/" target="_blank" rel="external">Blueprint</a>, <a href="http://flask.pocoo.org/docs/0.10/api/#flask.json.jsonify" target="_blank" rel="external">jsonify</a>, <a href="http://flask.pocoo.org/docs/0.10/reqcontext/" target="_blank" rel="external">request</a> and g modules. I created a ‘users’ Blueprint and added the root ‘/new’ route to create new users via <a href="http://en.wikipedia.org/wiki/POST_(HTTP" target="_blank" rel="external">HTTP POST</a>. <a href="http://www.restapitutorial.com" target="_blank" rel="external">REST API Tutorial</a> provides a greate “resource” for learning the appropriate synatx naming. <em>For a truely textbook <a href="http://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank" rel="external">RESTful</a> interface, one can argue between how a new resource is created ( ‘/users/new’, ‘/user/new’, or ‘/users’) and if resource pluralization matters, but I’ll save that discussion for a later date…</em></p>
+<p>The overall logic is straightforward. First we verify the request <a href="http://www.w3.org/Protocols/rfc1341/4_Content-Type.html" target="_blank" rel="external">content type</a> is <a href="(https://tools.ietf.org/html/rfc4627">‘application/json’</a>. Next we create the User model and check the payload. Then check if the User document exits in ES. Finally, create a new User document if the User key, email_address, does not exist in ES. </p>
+<figure class="highlight python"><figcaption><span>users/views.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/users/views.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.insert(<span class="number">0</span>, os.path.dirname(os.path.realpath(__file__)) +</span><br><span class="line">        <span class="string">'/../../../../../lib'</span>)</span><br><span class="line"><span class="keyword">from</span> example.v1.lib.user <span class="keyword">import</span> User, KEY_NAME <span class="keyword">as</span> USER_KEY_NAME</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Blueprint, jsonify, request, g</span><br><span class="line"><span class="keyword">from</span> elasticsearch <span class="keyword">import</span> TransportError</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line">logger = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line">users = Blueprint(<span class="string">'users'</span>, __name__)</span><br><span class="line"></span><br><span class="line"><span class="decorator">@users.route('/new', methods=['POST'])</span></span><br><span class="line">    <span class="string">""" create a user and hash their password</span><br><span class="line"></span><br><span class="line">    **Example request:**</span><br><span class="line"></span><br><span class="line">    .. sourcecode:: http</span><br><span class="line"></span><br><span class="line">    GET /users/new HTTP/1.1</span><br><span class="line">    Accept: application/json</span><br><span class="line">    data: &#123;</span><br><span class="line">        'email_address': 'abc@abc.com',</span><br><span class="line">        'password': 'abc123',</span><br><span class="line">        'first_name': 'abc',</span><br><span class="line">        'last_name': '123'</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    **Example response:**</span><br><span class="line"></span><br><span class="line">    .. sourcecode:: http</span><br><span class="line"></span><br><span class="line">    HTTP/1.1 200 OK</span><br><span class="line">    Content-Type: application/json</span><br><span class="line"></span><br><span class="line">    :statuscode 200: success</span><br><span class="line">    :statuscode 400: bad data</span><br><span class="line">    :statuscode 409: already exists</span><br><span class="line">    :statuscode 500: server error</span><br><span class="line">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> request.data:</span><br><span class="line">        message = <span class="string">"Content-Type: 'application/json' required"</span></span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">False</span>), <span class="number">400</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        user = User(**request.json)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> error:</span><br><span class="line">        message = str(error)</span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">False</span>), <span class="number">400</span></span><br><span class="line">    data = &#123;&#125;</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        data = g.db_client.get(<span class="string">'example'</span>, user.key)</span><br><span class="line">    <span class="keyword">except</span> (TransportError, Exception) <span class="keyword">as</span> error:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> getattr(error, <span class="string">'status_code'</span>, <span class="keyword">None</span>) == <span class="number">404</span>:</span><br><span class="line">            logger.critical(str(error))</span><br><span class="line">            message = <span class="string">"Something broke... We are looking into it!"</span></span><br><span class="line">            <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">False</span>), <span class="number">500</span></span><br><span class="line">    <span class="keyword">if</span> data.get(<span class="string">'found'</span>, <span class="keyword">None</span>):</span><br><span class="line">        message = <span class="string">"'%s' already exists."</span> % user.values[USER_KEY_NAME]</span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">False</span>), <span class="number">409</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        args = &#123;</span><br><span class="line">            <span class="string">'index'</span>: <span class="string">'example'</span>,</span><br><span class="line">            <span class="string">'id'</span>: user.key,</span><br><span class="line">            <span class="string">'body'</span>: user.values,</span><br><span class="line">            <span class="string">'doc_type'</span>: user.values[<span class="string">'_type'</span>]</span><br><span class="line">        &#125;</span><br><span class="line">        data = g.db_client.index(**args)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> error:</span><br><span class="line">        message = str(error)</span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">False</span>), <span class="number">500</span></span><br><span class="line">    message = <span class="string">"'%s' added successfully!"</span> % user.values[USER_KEY_NAME]</span><br><span class="line">    logger.debug(message)</span><br><span class="line">    <span class="keyword">return</span> jsonify(message=message, success=<span class="keyword">True</span>), <span class="number">200</span></span><br></pre></td></tr></table></figure>
+<p>Next we need to import the users Blueprint and register it with the URL route to the app in main.py:</p>
+<figure class="highlight python"><figcaption><span>main.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> example.v1.api.users.views <span class="keyword">import</span> users</span><br><span class="line">app.register_blueprint(users, url_prefix=<span class="string">"/v1/users"</span>)</span><br></pre></td></tr></table></figure>
+<p>If your ‘main.py’ file is not running, restart it. Finally, let’s test creating a new user ‘test@abc.com’ against the Users API with the <code>curl -X POST -H &#39;Content-Type: application/json&#39; -d &#39;{&quot;email_address&quot;: &quot;test@abc.com&quot;, &quot;password&quot;: &quot;test&quot;}&#39; http://127.0.0.1:8000/v1/users/new</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X POST  -D - -H &#39;Content-Type: application/json&#39; -d &#39;&#123;&#34;email_address&#34;: &#34;test@abc.com&#34;, &#34;password&#34;: &#34;test&#34;&#125;&#39; http://127.0.0.1:8000/v1/users/new&#10;HTTP/1.0 200 OK&#10;Content-Type: application/json&#10;Content-Length: 73&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Sun, 07 Dec 2014 00:33:55 GMT&#10;&#10;&#123;&#10;  &#34;message&#34;: &#34;&#39;test@abc.com&#39; added successfully!&#34;,&#10;  &#34;success&#34;: true&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>Success! </p>
+<p>You’ll notice that if we try to add the same user again, we recieve a 409 conflict error:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X POST  -D - -H &#39;Content-Type: application/json&#39; -d &#39;&#123;&#34;email_address&#34;: &#34;test@abc.com&#34;, &#34;password&#34;: &#34;test&#34;&#125;&#39; http://127.0.0.1:8000/v1/users/new&#10;HTTP/1.0 409 CONFLICT&#10;Content-Type: application/json&#10;Content-Length: 70&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Sun, 07 Dec 2014 00:34:01 GMT&#10;&#10;&#123;&#10;  &#34;message&#34;: &#34;&#39;test@abc.com&#39; already exists.&#34;,&#10;  &#34;success&#34;: false&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>That’s it for Part I. I’ll follow up in a couple weeks with Part II which will utilize <a href="https://flask-login.readthedocs.org/en/latest/" target="_blank" rel="external">Flask-Login</a> to handle the user session managment.</p>
+<p>Best,<br>Chris</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://phriscage.github.io/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/" data-id="ciklujcdw000j0sqpds290kq2" class="article-share-link">Share</a>
+      
+        <a href="http://phriscage.github.io/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/authentication/">authentication</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx-ssl-configuration" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/18/nginx-ssl-configuration/" class="article-date">
+  <time datetime="2014-10-18T11:06:00.000Z" itemprop="datePublished">Oct 18 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/18/nginx-ssl-configuration/">Nginx SSL Configuration</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><a href="http://nginx.org/" target="_blank" rel="external">Nginx</a> is becoming one of the more popular event driven web servers. As of October 2014, it is currently used amongst the top 20% of the most busiest websites today <a href="http://news.netcraft.com/archives/2014/10/10/october-2014-web-server-survey.html" target="_blank" rel="external">Netcraft</a>. Setting up SSL should not be a daunting task, so I created a default SSL configuration (from <a href="https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html" target="_blank" rel="external">Raymii.org</a>) and Nodejs config <a href="https://github.com/phriscage/nginx_ssl_configuration" target="_blank" rel="external">here</a>.</p>
+<p>You can setup multiple sub domains in the same server config:</p>
+<figure class="highlight python"><figcaption><span>server_name</span><a href="https://github.com/phriscage/nginx_ssl_configuration/blob/master/etc/nodejs_sample.conf#L8" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server_name    abc-dev.sample.com abc.sample.com;</span><br></pre></td></tr></table></figure>
+<p>Redirect all HTTP to HTTP requests permanently (301):</p>
+<figure class="highlight"><figcaption><span>HTTP redirect</span><a href="https://github.com/phriscage/nginx_ssl_configuration/blob/master/etc/nodejs_sample.conf#L12-L14" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if ($scheme != "https") &#123;</span><br><span class="line">    rewrite ^   https://$server_name$request_uri? permanent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Also, redirect any unsupported client browsers:</p>
+<figure class="highlight python"><figcaption><span>browser redirect</span><a href="https://github.com/phriscage/nginx_ssl_configuration/blob/master/etc/nodejs_sample.conf#L21-L24" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## redirect ie8 and lower</span></span><br><span class="line"><span class="keyword">if</span> ($http_user_agent ~ <span class="string">"MSIE\s([1-8])\."</span>) &#123;</span><br><span class="line">    rewrite ^ /unsupported <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/phriscage/nginx_ssl_configuration" target="_blank" rel="external">Source</a>.</p>
+<p>Best,<br>Chris</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://phriscage.github.io/2014/10/18/nginx-ssl-configuration/" data-id="ciklujce1000p0sqptpntam7p" class="article-share-link">Share</a>
+      
+        <a href="http://phriscage.github.io/2014/10/18/nginx-ssl-configuration/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssl/">ssl</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-inspired-protoype-application" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/10/01/inspired-protoype-application/" class="article-date">
+  <time datetime="2014-10-01T05:04:53.000Z" itemprop="datePublished">Oct 1 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/10/01/inspired-protoype-application/">Inspired Protoype Application</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>When I was invloved with the <a href="http://invid.io" target="_blank" rel="external">Invid.io</a> team from 2012-2014, one of the initial proof of concept projects I created was an application that provides video product metadata and merchant retailers directly to consumers. The <a href="http://inspiredapp.tv/" target="_blank" rel="external">Inspired</a> app (<a href="https://github.com/phriscage/inspired" target="_blank" rel="external">source</a>), enabled the content creators the ability to organize and sell their products to an audience. In this post, I’m going to provide an overview of the technologies utilized for the application at a high-level and a few specific examples. </p>
+<p>Most of the Python web applications I had built previously were using the <a href="https://www.djangoproject.com/" target="_blank" rel="external">Django</a> web framework. Since Inspired did not require all of the compents and functionality that Django provided out of the box, I decided to try <a href="http://flask.pocoo.org/" target="_blank" rel="external">Flask</a> for the project. I had created a few stand-alone APIs using Flask in my full-time position, but not a full-blown application. </p>
+<h2 id="Data-model"><a href="#Data-model" class="headerlink" title="Data model"></a>Data model</h2><p>Inspired was designed with a high-level relational data model of <strong>Artists -&gt; Videos -&gt; Products -&gt; Retailers</strong>. The complete Inspired ERD is below: </p>
+<img src="/2014/10/01/inspired-protoype-application/invidio_videos_erd.png" width="600" height="400">
+<p>I was initially tempted to use a NoSQL data store like <a href="http://cassandra.apache.org/" target="_blank" rel="external">Cassandra</a> to handle the horizontal scaling in the future, but at the time, I had minimal experience with denormalizing and duplicating the data to fit the specific queries for the user interface. I decided to go with the de facto standard relational data store, MySQL. Instead of creating standard raw SQL queries, I used an ORM plugin <a href="http://www.sqlalchemy.org/" target="_blank" rel="external">SQLAlchemy</a> to build the queries and model relationships. <a href="http://docs.sqlalchemy.org/en/rel_0_9/orm/relationships.html" target="_blank" rel="external">SQLAlchemy</a> provides some create documentation on how to build the model classes and their respectable releationships. Here’s an example of how the Video model uses both One-to-Many and Many-to-Many relationships in it’s class:</p>
+<figure class="highlight python"><figcaption><span>Video model</span><a href="https://github.com/phriscage/inspired/blob/master/lib/inspired/v1/lib/videos/models.py#L15-L54" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Video</span><span class="params">(Base)</span>:</span></span><br><span class="line"><span class="string">""" video_products join_table used to defined the bi-directional</span><br><span class="line">    relationship between Video and Product. Creating a separate class is</span><br><span class="line">    overkill unless additional atributes are required.</span><br><span class="line">"""</span></span><br><span class="line">video_products = Table(<span class="string">'video_products'</span>, Base.metadata,</span><br><span class="line">    Column(<span class="string">'video_id'</span>, Integer(unsigned=<span class="keyword">True</span>),</span><br><span class="line">        ForeignKey(<span class="string">'videos.video_id'</span>,</span><br><span class="line">        name=<span class="string">'fk_video_products_video_id'</span>, ondelete=<span class="string">"CASCADE"</span>),</span><br><span class="line">        index=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>),</span><br><span class="line">    Column(<span class="string">'product_id'</span>, Integer(unsigned=<span class="keyword">True</span>),</span><br><span class="line">        ForeignKey(<span class="string">'products.product_id'</span>,</span><br><span class="line">        name=<span class="string">'fk_video_products_product_id'</span>, ondelete=<span class="string">"CASCADE"</span>),</span><br><span class="line">        index=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>),</span><br><span class="line">    mysql_engine=<span class="string">'InnoDB'</span>,</span><br><span class="line">    mysql_charset=<span class="string">'utf8'</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Video</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="string">""" Attributes for the Video model. Custom MapperExtension declarative for </span><br><span class="line">        before insert and update methods. The migrate.versioning api does not</span><br><span class="line">        handle sqlalchemy.dialects.mysql for custom column attributes. I.E.</span><br><span class="line">        INTEGER(unsigned=True), so they need to be modified manually.</span><br><span class="line">     """</span></span><br><span class="line">    __tablename__ = <span class="string">'videos'</span></span><br><span class="line">    __table_args__ = &#123;</span><br><span class="line">        <span class="string">'mysql_engine'</span>: <span class="string">'InnoDB'</span>,</span><br><span class="line">        <span class="string">'mysql_charset'</span>: <span class="string">'utf8'</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">## mapper extension declarative for before insert and before update</span></span><br><span class="line">    __mapper_args__ = &#123; <span class="string">'extension'</span>: BaseExtension() &#125;</span><br><span class="line"></span><br><span class="line">    id = Column(<span class="string">'video_id'</span>, Integer(unsigned=<span class="keyword">True</span>), primary_key=<span class="keyword">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">120</span>), unique=<span class="keyword">True</span>, index=<span class="keyword">True</span>, nullable=<span class="keyword">False</span>)</span><br><span class="line">    image_url = Column(String(<span class="number">2083</span>))</span><br><span class="line">    video_sources = relationship(<span class="string">"VideoSource"</span>, backref=<span class="string">"video"</span>)</span><br><span class="line">    scenes = relationship(<span class="string">"Scene"</span>, backref=<span class="string">"video"</span>)</span><br><span class="line">    products = relationship(<span class="string">"Product"</span>, secondary=<span class="string">"video_products"</span>,</span><br><span class="line">        backref=<span class="string">"videos"</span>)</span><br><span class="line">    created_at = Column(DateTime(), nullable=<span class="keyword">False</span>)</span><br><span class="line">    updated_at = Column(DateTime(), nullable=<span class="keyword">False</span>)</span><br></pre></td></tr></table></figure>
+<p>When I was building the data models, I wanted to use a similar DJango function for auto updating the DateTime fields whenever the row was created/updated <a href="https://docs.djangoproject.com/en/1.4/ref/models/fields/#django.db.models.DateField" target="_blank" rel="external">auto_now</a>. SQLAlchemy 0.7.8 did not have this ability, but you could create custom <em>extensions</em> for the SQLAlchemy model through the <em><strong>mapper_args</strong></em>. I was able to implement the auto_now by extending the MapperExtension:</p>
+<figure class="highlight python"><figcaption><span>BaseExtension</span><a href="https://github.com/phriscage/inspired/blob/master/lib/inspired/v1/lib/helpers.py#L6-L18" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseExtension</span><span class="params">(MapperExtension)</span>:</span></span><br><span class="line">    <span class="string">"""Base entension class for all entity """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">before_insert</span><span class="params">(self, mapper, connection, instance)</span>:</span></span><br><span class="line">        <span class="string">""" set the created_at  """</span></span><br><span class="line">        datetime_now = datetime.datetime.now()</span><br><span class="line">        instance.created_at = datetime_now</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> instance.updated_at:</span><br><span class="line">            instance.updated_at = datetime_now</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">before_update</span><span class="params">(self, mapper, connection, instance)</span>:</span></span><br><span class="line">        <span class="string">""" set the updated_at  """</span></span><br><span class="line">        instance.updated_at = datetime.datetime.now()</span><br></pre></td></tr></table></figure>
+<h2 id="Schema-Migrations"><a href="#Schema-Migrations" class="headerlink" title="Schema Migrations"></a>Schema Migrations</h2><p>I was familiar with Ruby on Rails schema migrations and used a snippet of the Rails migration functionality extensively for Django (<a href="http://south.aeracode.org/" target="_blank" rel="external">South</a> was not mature yet). I decided to give <a href="https://bitbucket.org/zzzeek/alembic" target="_blank" rel="external">Alembic</a> a try since it has the ability to auto-generate the migrations based off the SQLAlchemy models. There were some <em>gotchas</em> with the 0.6.0 release, but overall, I think it is comparable to Rails migrations. I.E.</p>
+<ul>
+<li>explicitly importing sqlalchemy.dialects.mysql.INTEGER for unsigned values</li>
+<li>version filename length had fixed limit</li>
+</ul>
+<p>I was also able to seed some initial test data (outside unit testing) in a few migrations. </p>
+<h2 id="Unit-testing"><a href="#Unit-testing" class="headerlink" title="Unit testing"></a>Unit testing</h2><p>I used Python’s unittest library to test both the SQLAlchemy models and Flask API end points. For each model and API test case class, I duplicated the MySQL schema and ran the migrations to ensure a clean environment. The <a href="https://nose.readthedocs.org/en/latest/" target="_blank" rel="external">nosetest</a> performance was not great, but utilizing MySQL over SQLlite provided a more <em>production like</em> environment for test simulation. </p>
+<figure class="highlight python"><figcaption><span>unittest</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ nosetests -s -x</span><br><span class="line">...........................................................................</span><br><span class="line">----------------------------------------------------------------------</span><br><span class="line">Ran <span class="number">75</span> tests <span class="keyword">in</span> <span class="number">5.823</span>s</span><br><span class="line"></span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>Feel free to check out the <a href="https://github.com/phriscage/inspired" target="_blank" rel="external">source</a> and let me know if you have any questions.</p>
+<p>Best,<br>Chris</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://phriscage.github.io/2014/10/01/inspired-protoype-application/" data-id="ciklujcej000w0sqpz915yhmm" class="article-share-link">Share</a>
+      
+        <a href="http://phriscage.github.io/2014/10/01/inspired-protoype-application/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sqlalchemy/">sqlalchemy</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+  
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/authentication/">authentication</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flask/">flask</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nosql/">nosql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/session-management/">session management</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/authentication/" style="font-size: 15px;">authentication</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/elasticsearch/" style="font-size: 15px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 20px;">flask</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/nosql/" style="font-size: 15px;">nosql</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/session-management/" style="font-size: 10px;">session management</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/01/18/Hexo-blog-development-on-Docker/">Hexo blog development on Docker</a>
+          </li>
+        
+          <li>
+            <a href="/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/">Flask NoSQL Authentication Tutorial - Part II</a>
+          </li>
+        
+          <li>
+            <a href="/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/">Flask NoSQL Authentication Tutorial - Part I</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/18/nginx-ssl-configuration/">Nginx SSL Configuration</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/01/inspired-protoype-application/">Inspired Protoype Application</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Christopher Page<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'phriscagegithubio';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

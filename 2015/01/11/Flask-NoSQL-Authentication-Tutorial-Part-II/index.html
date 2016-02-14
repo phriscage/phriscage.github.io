@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Flask NoSQL Authentication Tutorial - Part II | Page One</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="OverviewThis is the second part of a tutorial that provides instructions for how to create an authentication mechanism for a web application utilizing Flask as the Python web framework and Elasticsear">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flask NoSQL Authentication Tutorial - Part II">
+<meta property="og:url" content="http://phriscage.github.io/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/index.html">
+<meta property="og:site_name" content="Page One">
+<meta property="og:description" content="OverviewThis is the second part of a tutorial that provides instructions for how to create an authentication mechanism for a web application utilizing Flask as the Python web framework and Elasticsear">
+<meta property="og:updated_time" content="2016-02-13T20:59:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flask NoSQL Authentication Tutorial - Part II">
+<meta name="twitter:description" content="OverviewThis is the second part of a tutorial that provides instructions for how to create an authentication mechanism for a web application utilizing Flask as the Python web framework and Elasticsear">
+  
+    <link rel="alternative" href="/atom.xml" title="Page One" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Page One</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">A collection of software projects by Chris Page</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <a id="nav-github-link" class="nav-icon" href="https://github.com/phriscage" target="_blank"></a>
+        <a id="nav-linkedin-link" class="nav-icon" href="https://www.linkedin.com/in/christophertpage" target="_blank"></a>
+        <a id="nav-twitter-link" class="nav-icon" href="https://twitter.com/phriscage" target="_blank"></a>
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://phriscage.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Flask-NoSQL-Authentication-Tutorial-Part-II" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/" class="article-date">
+  <time datetime="2015-01-11T02:29:00.000Z" itemprop="datePublished">Jan 11 2015</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Flask NoSQL Authentication Tutorial - Part II
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>This is the second part of a tutorial that provides instructions for how to create an authentication mechanism for a web application utilizing <a href="http://flask.pocoo.org/" target="_blank" rel="external">Flask</a> as the <a href="https://www.python.org/" target="_blank" rel="external">Python</a> web framework and <a href="http://www.elasticsearch.com/" target="_blank" rel="external">Elasticsearch</a> (ES) as the NoSQL data store. </p>
+<p>The first part of the tutorial covered the prerequisites, the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">Main API</a>, the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">User model</a>, and the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/users/views.py" target="_blank" rel="external">Users API</a> end point. In this second part of the tutorial, I will be covering the <a href="https://flask-login.readthedocs.org/en/latest/" target="_blank" rel="external">Flask-Login</a> and session management modifications required for the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">main API</a>, the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">User model</a>, and the <a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/auth/views.py" target="_blank" rel="external">Auth API</a>. </p>
+<p>Once again, feel free to ask any questions below and I’ll be happy to respond!</p>
+<h2 id="Flask-Login"><a href="#Flask-Login" class="headerlink" title="Flask-Login"></a>Flask-Login</h2><p>Flask-Login provides user session management for basic authentication tasks; logging a user in and logging out a user, in your application. You can restrict specific views for non-authenticated users by adding a decorator to your view routes. For this tutorial example, I have followed the <a href="https://flask-login.readthedocs.org/en/latest/#configuring-your-application" target="_blank" rel="external">basic configuration</a> and created a custom <a href="https://flask-login.readthedocs.org/en/latest/#flask.ext.login.LoginManager.user_loader" target="_blank" rel="external">user_loader</a> for ES. </p>
+<h2 id="Main-API"><a href="#Main-API" class="headerlink" title="Main API"></a>Main API</h2><p>In the Main API, we define the ‘login_manager’ and the ‘load_user’ function for the Flask-Login ‘user_loader’ decorator which sets the callback for reloading a user from the session. The ‘load_user’ funcation creates a User object, checks if the user exists in ES, then returns the User object:</p>
+<figure class="highlight python"><figcaption><span>main.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="decorator">@login_manager.user_loader</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_user</span><span class="params">(email_address)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        user = User(email_address=email_address)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> error:</span><br><span class="line">        message = str(error)</span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">    data = &#123;&#125;</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        data = g.db_client.get(<span class="string">'example'</span>, user.key)</span><br><span class="line">    <span class="keyword">except</span> (TransportError, Exception) <span class="keyword">as</span> error:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> getattr(error, <span class="string">'status_code'</span>, <span class="keyword">None</span>) == <span class="number">404</span>:</span><br><span class="line">            logger.critical(str(error))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> data.get(<span class="string">'found'</span>, <span class="keyword">None</span>):</span><br><span class="line">        message = <span class="string">"'%s' does not exist."</span> % email_address</span><br><span class="line">        logger.warn(message)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line">    user.set_values(values=data[<span class="string">'_source'</span>])</span><br><span class="line">    <span class="keyword">return</span> user</span><br></pre></td></tr></table></figure>
+<p>Then we define the APP_SECRET_KEY as a global variable, then assign it to the main app and instantiate the ‘login_manager’:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.secret_key = APP_SECRET_KEY&#10;login_manager.init_app(app)</span><br></pre></td></tr></table></figure>
+<p>That’s all the changes required for the ‘main.py’. We need to modify the User model but those changes are minor too.</p>
+<h2 id="User-model"><a href="#User-model" class="headerlink" title="User model"></a>User model</h2><p>For the User model, we need to add a few functions that are required for <a href="https://flask-login.readthedocs.org/en/latest/#your-user-class" target="_blank" rel="external">Flask-Login</a>. The function doc strings should be self explanatory. </p>
+<figure class="highlight python"><figcaption><span>User.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/lib/user.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_authenticated</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">""" should just return True unless the object represents a user</span><br><span class="line">        that should not be allowed to authenticate for some reason.</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">if</span> self.is_anonymous():</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_active</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">""" method should return True for users unless they are inactive, for</span><br><span class="line">        example because they have been banned.</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.values.get(<span class="string">'is_active'</span>, <span class="keyword">False</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_anonymous</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">""" method should return True only for fake users that are not supposed</span><br><span class="line">        to log in to the system.</span><br><span class="line">    """</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> self.values.get(<span class="string">'is_anonymous'</span>, <span class="keyword">False</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_id</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">""" return the self.key """</span></span><br><span class="line">    <span class="keyword">return</span> self.values[KEY_NAME]</span><br></pre></td></tr></table></figure>
+<h2 id="Auth-API"><a href="#Auth-API" class="headerlink" title="Auth API"></a>Auth API</h2><p>Now for the Auth API, we create a ‘login’ route for authenticating a user and a ‘logout’ for unauthenticating a user. For the ‘login’ route, first, we verify the user submitting the request is valid by checking if the user key exists in ES. Next, we check if the request payload includes the correct password by comparing the password value with the hashed password from the database. Finally, we add the valid user into session via ‘login_user’. The ‘login’ route is almost identical to the ‘new’ user route from the User API, but we add the password check and add the authenticated user via ‘login_user’:</p>
+<figure class="highlight"><figcaption><span>Auth</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/auth/views.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">    logger.debug("'%s' successfully found!", request.json['email_address'])</span><br><span class="line">    user.set_values(values=data['_source'])</span><br><span class="line">    if not user.check_password(request.json['password']):</span><br><span class="line">        logger.warn("'%s' incorrect password", request.json['email_address'])</span><br><span class="line">        message = "Unknown email_address or bad password"</span><br><span class="line">        return jsonify(message=message, success=False), 400</span><br><span class="line">    login_user(user)</span><br><span class="line">    message = "'%s' successfully logged in!" % request.json['email_address']</span><br><span class="line">    logger.info(message)</span><br><span class="line">...</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">Once a use is authenticated, the active user is now stored in the session. For the 'logout' route, we simply call the 'logout_user()' method to remove the user id from the current session. Now let's create a test route that is only accessible from authorized users.</span><br><span class="line"></span><br><span class="line">## Test API</span><br><span class="line"></span><br><span class="line">The [Test API](https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/test/views.py) includes the 'login_required' decorator which restricts access to only users that are authenticated:</span><br><span class="line"></span><br><span class="line">``` Python Test https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/test/views.py</span><br><span class="line">...</span><br><span class="line">@test.route('')</span><br><span class="line">@login_required</span><br><span class="line">def index():</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>Import the new auth and test Blueprints and register it with the URL route to the app in main.py:</p>
+<figure class="highlight python"><figcaption><span>main.py</span><a href="https://github.com/phriscage/flask_elasticsearch_auth_example/blob/master/lib/example/v1/api/main.py" target="_blank" rel="external">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> example.v1.api.auth.views <span class="keyword">import</span> auth</span><br><span class="line">app.register_blueprint(auth, url_prefix=<span class="string">"/v1/auth"</span>)</span><br><span class="line"><span class="keyword">from</span> example.v1.api.users.views <span class="keyword">import</span> users</span><br><span class="line">app.register_blueprint(users, url_prefix=<span class="string">"/v1/users"</span>)</span><br><span class="line"><span class="keyword">from</span> example.v1.api.test.views <span class="keyword">import</span> test</span><br><span class="line">app.register_blueprint(test, url_prefix=<span class="string">"/v1/test"</span>)</span><br></pre></td></tr></table></figure>
+<p>Start the application again with the ‘main.py’ and run <code>curl -X GET -D - http://127.0.0.1:8000/v1/test</code>. You should recieve an 401 unauthorized response:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET -D - http://127.0.0.1:8000/v1/test&#10;HTTP/1.0 401 UNAUTHORIZED&#10;Content-Type: application/json&#10;Content-Length: 294&#10;Set-Cookie: session=eyJfaWQiOnsiIGIiOiJOalk0TldVMU1XWXdaamsyT0Roa1pqVmxOamN3TnpRNU5tSmpNamsxTVRJPSJ9fQ.B6pYAg.q2HbuYgeleBAGU1kKfDCCnGEugg; HttpOnly; Path=/&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Tue, 20 Jan 2015 01:18:19 GMT&#10;&#10;&#123;&#10;  &#34;error&#34;: &#34;401: Unauthorized&#34;,&#10;  &#34;message&#34;: &#34;The server could not verify that you are authorized to access the URL requested.  You either supplied the wrong credentials (e.g. a bad password), or your browser doesn&#39;t understand how to supply the credentials required.&#34;,&#10;  &#34;success&#34;: false&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>We need to first authenticate our test user, store the cookie, then send the request again. Let’s authenticate the user we created in <a href="http://phriscage.github.io/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/">Part I</a>, ‘test@abc.com’ and store the cookies into a file, ‘cookies.txt’ </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X POST -s -D - -c ~/cookies.txt -H &#39;Content-Type: application/json&#39; -d &#39;&#123;&#34;email_address&#34;: &#34;test@abc.com&#34;, &#34;password&#34;: &#34;test&#34;&#125;&#39; http://127.0.0.1:8000/v1/auth/login&#10;HTTP/1.0 200 OK&#10;Content-Type: application/json&#10;Content-Length: 360&#10;Set-Cookie: session=eyJfZnJlc2giOnRydWUsIl9pZCI6eyIgYiI6Ik5qWTROV1UxTVdZd1pqazJPRGhrWmpWbE5qY3dOelE1Tm1Kak1qazFNVEk9In0sInVzZXJfaWQiOiJ0ZXN0QGFiYy5jb20ifQ.B58_Qg.Ez4andKJ01l51Ltd5nDg9EyXzTQ; HttpOnly; Path=/&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Tue, 20 Jan 2015 01:22:10 GMT&#10;&#10;&#123;&#10;  &#34;data&#34;: &#123;&#10;    &#34;_id&#34;: &#34;test@abc.com&#34;,&#10;    &#34;_index&#34;: &#34;example&#34;,&#10;    &#34;_source&#34;: &#123;&#10;      &#34;_type&#34;: &#34;user&#34;,&#10;      &#34;created_at&#34;: 1417912435.2168,&#10;      &#34;email_address&#34;: &#34;test@abc.com&#34;,&#10;      &#34;is_active&#34;: true&#10;    &#125;,&#10;    &#34;_type&#34;: &#34;user&#34;,&#10;    &#34;_version&#34;: 1,&#10;    &#34;found&#34;: true&#10;  &#125;,&#10;  &#34;message&#34;: &#34;&#39;test@abc.com&#39; successfully logged in!&#34;,&#10;  &#34;success&#34;: true&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>Boom! We’ve successfully authenitcated our test user! You can view the ‘cookies.txt’ to see the current session cookie. Now we can use that session variable to send a request to ‘test’ again: <code>curl -X GET -s -D - -b ~/cookies.txt http://127.0.0.1:8000/v1/test</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET -s -D - -b ~/cookies.txt http://127.0.0.1:8000/v1/test&#10;HTTP/1.0 200 OK&#10;Content-Type: application/json&#10;Content-Length: 273&#10;Set-Cookie: session=eyJfZnJlc2giOnRydWUsIl9pZCI6eyIgYiI6Ik5qWTROV1UxTVdZd1pqazJPRGhrWmpWbE5qY3dOelE1Tm1Kak1qazFNVEk9In0sInVzZXJfaWQiOiJ0ZXN0QGFiYy5jb20ifQ.B58_6Q.JoOanNrX80o0hiBnrwGllvUg1G8; HttpOnly; Path=/&#10;Server: Werkzeug/0.9.6 Python/2.6.6&#10;Date: Tue, 20 Jan 2015 01:24:57 GMT&#10;&#10;&#123;&#10;  &#34;data&#34;: &#123;&#10;    &#34;cookies&#34;: &#123;&#10;      &#34;session&#34;: &#34;eyJfZnJlc2giOnRydWUsIl9pZCI6eyIgYiI6Ik5qWTROV1UxTVdZd1pqazJPRGhrWmpWbE5qY3dOelE1Tm1Kak1qazFNVEk9In0sInVzZXJfaWQiOiJ0ZXN0QGFiYy5jb20ifQ.B58_Qg.Ez4andKJ01l51Ltd5nDg9EyXzTQ&#34;&#10;    &#125;&#10;  &#125;,&#10;  &#34;message&#34;: &#34;Test&#34;,&#10;  &#34;success&#34;: true&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>That’s it! There’s not alot too it. You can use the ‘login_required’ decorator on any view that requires authentication. There are some session expiration configuration options and custom authentication params that are confgiurable in Flask-Login. </p>
+<p>I hope you have found this tutorial helpful and maybe even learned a thing or two about Python, Flask, authentication, etc. Let me know if you have any questions.</p>
+<p>Best,</p>
+<p>Chris</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://phriscage.github.io/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/" data-id="ciklujcds00060sqpllqf14y5" class="article-share-link">Share</a>
+      
+        <a href="http://phriscage.github.io/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/authentication/">authentication</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/session-management/">session management</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/18/Hexo-blog-development-on-Docker/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Hexo blog development on Docker
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Flask NoSQL Authentication Tutorial - Part I</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/authentication/">authentication</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flask/">flask</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nosql/">nosql</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/session-management/">session management</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/authentication/" style="font-size: 15px;">authentication</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/elasticsearch/" style="font-size: 15px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 20px;">flask</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/nosql/" style="font-size: 15px;">nosql</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/session-management/" style="font-size: 10px;">session management</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/01/18/Hexo-blog-development-on-Docker/">Hexo blog development on Docker</a>
+          </li>
+        
+          <li>
+            <a href="/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/">Flask NoSQL Authentication Tutorial - Part II</a>
+          </li>
+        
+          <li>
+            <a href="/2014/12/06/Flask-NoSQL-Authentication-Tutorial-Part-I/">Flask NoSQL Authentication Tutorial - Part I</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/18/nginx-ssl-configuration/">Nginx SSL Configuration</a>
+          </li>
+        
+          <li>
+            <a href="/2014/10/01/inspired-protoype-application/">Inspired Protoype Application</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Christopher Page<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'phriscagegithubio';
+  
+  var disqus_url = 'http://phriscage.github.io/2015/01/11/Flask-NoSQL-Authentication-Tutorial-Part-II/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
